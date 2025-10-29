@@ -1,0 +1,3 @@
+Usages,Signature,Body
+"1 usage","private void postSuccess(SaveCallback callback)","if (callback == null) {\n    return;\n}\nmainHandler.post(() -> callback.onSuccess());"
+"3 usages","private void postFailure(SaveCallback callback)","if (callback == null) {\n    return;\n}\nmainHandler.post(() -> callback.onFailure());"

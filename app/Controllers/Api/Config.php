@@ -13,6 +13,7 @@ class Config extends BaseController
     {
         $config = [
             'gemini_key'      => getenv('GEMINI_API_KEY') ?: '',
+            'gemini_model'    => getenv('GEMINI_MODEL') ?: 'models/gemini-1.5-flash',
             'scan_page_limit' => (int) (getenv('SCAN_PAGE_LIMIT') ?: 5),
             'max_upload_mb'   => (int) (getenv('DOCUMENT_MAX_UPLOAD_MB') ?: 25),
         ];
@@ -20,4 +21,3 @@ class Config extends BaseController
         return $this->respond($config);
     }
 }
-

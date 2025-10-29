@@ -1,0 +1,504 @@
+{
+  "info": {
+    "_postman_id": "13948d43-e193-4674-9423-c20bdfa12bcf",
+    "name": "WriteScan Backend",
+    "description": "Postman collection for the WriteScan CodeIgniter backend. Authenticate with the mobile OTP flow first — the `Verify OTP` call returns the session cookie that must accompany all subsequent requests.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "description": "Mobile OTP authentication workflow. All requests operate on the session cookie returned by `Verify OTP`.",
+      "item": [
+        {
+          "name": "Request OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mobile\": \"{{mobile}}\"\n}"
+            },
+            "url": "{{baseUrl}}/auth/request-otp",
+            "description": "Starts the OTP login flow. Pass the mobile number in international format (e.g. `94771234567`)."
+          },
+          "response": []
+        },
+        {
+          "name": "Verify OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mobile\": \"{{mobile}}\",\n  \"reference_no\": \"{{referenceNo}}\",\n  \"otp\": \"{{otpCode}}\"\n}"
+            },
+            "url": "{{baseUrl}}/auth/verify-otp",
+            "description": "Completes the OTP login and establishes the PHP session. Postman will store the `Set-Cookie` header for subsequent authenticated requests."
+          },
+          "response": []
+        },
+        {
+          "name": "Me",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/me",
+            "description": "Returns the currently authenticated user or `guest` if no session is active."
+          },
+          "response": []
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/logout",
+            "description": "Destroys the session on the server."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Config",
+      "item": [
+        {
+          "name": "Get Runtime Config",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/config",
+            "description": "Fetches dynamic configuration such as the Gemini model, API key, scan page limit, and maximum upload size."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Folders",
+      "item": [
+        {
+          "name": "List Folders",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/folders",
+            "description": "Returns every folder owned by the logged-in user."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Folder",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Invoices\",\n  \"color\": \"#4C6FFF\"\n}"
+            },
+            "url": "{{baseUrl}}/folders",
+            "description": "Creates a new folder. The color field is optional; defaults to `#4C6FFF`."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Folder",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Name\",\n  \"color\": \"#2F8D46\"\n}"
+            },
+            "url": "{{baseUrl}}/folders/{{folderId}}",
+            "description": "Updates an existing folder. Include only the fields that need to change."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Folder",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/folders/{{folderId}}",
+            "description": "Permanently removes the folder. Any documents pointing at the folder will have their `folder_id` cleared."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Documents",
+      "item": [
+        {
+          "name": "List Documents",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/documents",
+            "description": "Returns active documents for the user. Optional query param `updated_after=2024-06-01 00:00:00` performs incremental sync."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Document",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/documents/{{documentId}}",
+            "description": "Fetches metadata for a single document, including the absolute file URL on the server."
+          },
+          "response": []
+        },
+        {
+          "name": "Upload Document",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "Quarterly Report",
+                  "type": "text"
+                },
+                {
+                  "key": "type",
+                  "value": "pdf",
+                  "type": "text",
+                  "description": "Document type label (pdf, image, csv, etc.). Defaults to pdf."
+                },
+                {
+                  "key": "folder_id",
+                  "value": "{{folderId}}",
+                  "type": "text",
+                  "description": "Optional folder assignment."
+                },
+                {
+                  "key": "gemini_text",
+                  "value": "Extracted text preview …",
+                  "type": "text",
+                  "description": "Optional Gemini transcription or summary."
+                },
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "",
+                  "description": "Attach the PDF or image to upload."
+                }
+              ]
+            },
+            "url": "{{baseUrl}}/documents",
+            "description": "Uploads a new scan. The response returns the stored metadata and the public file URL."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Document",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Renamed document\",\n  \"folder_id\": \"{{folderId}}\",\n  \"gemini_text\": \"Updated Gemini output\"\n}"
+            },
+            "url": "{{baseUrl}}/documents/{{documentId}}",
+            "description": "Renames a document, reassigns folders, or updates Gemini text."
+          },
+          "response": []
+        },
+        {
+          "name": "Archive Document",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/documents/{{documentId}}",
+            "description": "Marks the document as archived (soft delete)."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Bots",
+      "item": [
+        {
+          "name": "List Bots",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/bots",
+            "description": "Returns all active AI bots tied to the user along with document summaries."
+          },
+          "response": []
+        },
+        {
+          "name": "Show Bot",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/bots/{{botId}}",
+            "description": "Fetches a single bot with its linked document metadata."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Bot",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"My Analysis Bot\",\n  \"document_id\": \"{{documentId}}\"\n}"
+            },
+            "url": "{{baseUrl}}/bots",
+            "description": "Creates a bot that chats using the supplied document. `name` is optional; defaults to the document name."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Bot",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/bots/{{botId}}",
+            "description": "Soft deletes the bot and removes its stored messages."
+          },
+          "response": []
+        },
+        {
+          "name": "Bot Messages",
+          "item": [
+            {
+              "name": "List Messages",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/bots/{{botId}}/messages",
+                "description": "Retrieves the chat history for a given bot."
+              },
+              "response": []
+            },
+            {
+              "name": "Send Message",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"message\": \"What are the key action items?\"\n}"
+                },
+                "url": "{{baseUrl}}/bots/{{botId}}/messages",
+                "description": "Sends a user prompt to the bot. The response contains both the stored user message and the AI reply."
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "General Chat",
+      "item": [
+        {
+          "name": "List Messages",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/general-chat",
+            "description": "Returns the saved general chat thread for the current user."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Message",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": \"user\",\n  \"type\": \"text\",\n  \"content\": \"Hello from Postman\"\n}"
+            },
+            "url": "{{baseUrl}}/general-chat",
+            "description": "Persists a new message in the general-purpose chat log. `role` must be `user` or `assistant`; `type` is `text` or `image`."
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8888/codeigniter-backend/public/api"
+    },
+    {
+      "key": "mobile",
+      "value": "94771234567"
+    },
+    {
+      "key": "referenceNo",
+      "value": ""
+    },
+    {
+      "key": "otpCode",
+      "value": ""
+    },
+    {
+      "key": "folderId",
+      "value": ""
+    },
+    {
+      "key": "documentId",
+      "value": ""
+    },
+    {
+      "key": "botId",
+      "value": ""
+    }
+  ]
+}
