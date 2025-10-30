@@ -49,6 +49,11 @@ class Auth extends BaseController
                     'status'       => 'active',
                 ]);
                 $user = $userModel->find($userId);
+            } elseif (($user['status'] ?? 'active') !== 'active') {
+                $userModel->update($user['id'], [
+                    'status' => 'active',
+                ]);
+                $user = $userModel->find($user['id']);
             }
 
             session()->set([
@@ -145,6 +150,11 @@ class Auth extends BaseController
                 'status'       => 'active',
             ]);
             $user = $userModel->find($userId);
+        } elseif (($user['status'] ?? 'active') !== 'active') {
+            $userModel->update($user['id'], [
+                'status' => 'active',
+            ]);
+            $user = $userModel->find($user['id']);
         }
 
         session()->set([
