@@ -24,32 +24,7 @@ class Database extends Config
      *
      * @var array<string, mixed>
      */
-    public array $default = [
-        'DSN'          => '',
-        'hostname'     => 'localhost',
-        'username'     => '',
-        'password'     => '',
-        'database'     => '',
-        'DBDriver'     => 'MySQLi',
-        'DBPrefix'     => '',
-        'pConnect'     => false,
-        'DBDebug'      => true,
-        'charset'      => 'utf8mb4',
-        'DBCollat'     => 'utf8mb4_general_ci',
-        'swapPre'      => '',
-        'encrypt'      => false,
-        'compress'     => false,
-        'strictOn'     => false,
-        'failover'     => [],
-        'port'         => 3306,
-        'numberNative' => false,
-        'foundRows'    => false,
-        'dateFormat'   => [
-            'date'     => 'Y-m-d',
-            'datetime' => 'Y-m-d H:i:s',
-            'time'     => 'H:i:s',
-        ],
-    ];
+    public array $default;
 
     //    /**
     //     * Sample database connection for SQLite3.
@@ -191,6 +166,33 @@ class Database extends Config
 
     public function __construct()
     {
+        $this->default = [
+            'DSN'          => env('database.default.DSN', ''),
+            'hostname'     => env('database.default.hostname', '127.0.0.1'),
+            'username'     => env('database.default.username', 'root'),
+            'password'     => env('database.default.password', ''),
+            'database'     => env('database.default.database', ''),
+            'DBDriver'     => env('database.default.DBDriver', 'MySQLi'),
+            'DBPrefix'     => env('database.default.DBPrefix', ''),
+            'pConnect'     => (bool) env('database.default.pConnect', false),
+            'DBDebug'      => (bool) env('database.default.DBDebug', true),
+            'charset'      => env('database.default.charset', 'utf8mb4'),
+            'DBCollat'     => env('database.default.DBCollat', 'utf8mb4_general_ci'),
+            'swapPre'      => env('database.default.swapPre', ''),
+            'encrypt'      => (bool) env('database.default.encrypt', false),
+            'compress'     => (bool) env('database.default.compress', false),
+            'strictOn'     => (bool) env('database.default.strictOn', false),
+            'failover'     => [],
+            'port'         => (int) env('database.default.port', 3306),
+            'numberNative' => (bool) env('database.default.numberNative', false),
+            'foundRows'    => (bool) env('database.default.foundRows', false),
+            'dateFormat'   => [
+                'date'     => 'Y-m-d',
+                'datetime' => 'Y-m-d H:i:s',
+                'time'     => 'H:i:s',
+            ],
+        ];
+
         parent::__construct();
 
         // Ensure that we always set the database group to 'tests' if

@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "13948d43-e193-4674-9423-c20bdfa12bcf",
     "name": "WriteScan Backend",
-    "description": "Postman collection for the WriteScan CodeIgniter backend. Authenticate with the mobile OTP flow first — the `Verify OTP` call returns the session cookie that must accompany all subsequent requests.",
+    "description": "Postman collection for the WriteScan CodeIgniter backend. Authenticate with the mobile OTP flow first \u2014 the `Verify OTP` call returns the session cookie that must accompany all subsequent requests.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -53,6 +53,29 @@
             },
             "url": "{{baseUrl}}/auth/verify-otp",
             "description": "Completes the OTP login and establishes the PHP session. Postman will store the `Set-Cookie` header for subsequent authenticated requests."
+          },
+          "response": []
+        },
+        {
+          "name": "Unsubscribe",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mobile\": \"{{mobile}}\"\n}"
+            },
+            "url": "{{baseUrl}}/auth/unregister",
+            "description": "Marks the current user as inactive and unsubscribes them from the OTP provider."
           },
           "response": []
         },
@@ -254,7 +277,7 @@
                 },
                 {
                   "key": "gemini_text",
-                  "value": "Extracted text preview …",
+                  "value": "Extracted text preview \u2026",
                   "type": "text",
                   "description": "Optional Gemini transcription or summary."
                 },
@@ -474,7 +497,7 @@
   "variable": [
     {
       "key": "baseUrl",
-      "value": "http://localhost:8888/codeigniter-backend/public/api"
+      "value": "https://phpstack-1483171-5959376.cloudwaysapps.com/api"
     },
     {
       "key": "mobile",

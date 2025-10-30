@@ -169,6 +169,60 @@ class Auth extends BaseController
         ]);
     }
 
+    public function unregister()
+    {
+        $payload = $this->request->getJSON(true) ?? $this->request->getPost();
+        $mobile  = trim((string) ($payload['mobile'] ?? ''));
+
+        $session = session();
+        $sessionMobile = (string) ($session->get('mobile') ?? '');
+
+        if ($sessionMobile !== '') {
+            $mobile = $sessionMobile;
+        }
+
+        if ($mobile === '') {
+            return $this->failValidationErrors([
+                'mobile' => 'Mobile number is required.',
+            ]);
+        }
+
+        $response = $this->callApi([
+            'funName' => 'unRegistration',
+            'app_id'  => $this->appId,
+            'mobile'  => $mobile,
+        ]);
+
+        if (! isset($response->response)) {
+            return $this->fail('Unable to reach unsubscribe service.');
+        }
+
+        $remoteStatus = (string) ($response->response ?? '');
+
+        if (! in_array($remoteStatus, ['Success', 'SUCCESS', 'Unsubscribed', 'UNSUBSCRIBED'], true)) {
+            $message = $response->message ?? 'Unable to unsubscribe at this time.';
+            return $this->fail($message);
+        }
+
+        $userModel = model(UserModel::class);
+        $user      = $userModel->where('mobile', $mobile)->first();
+
+        if ($user) {
+            $userModel->update($user['id'], [
+                'status' => 'inactive',
+            ]);
+        }
+
+        if ($session->get('isLoggedIn')) {
+            $session->destroy();
+        }
+
+        return $this->respond([
+            'status'  => 'success',
+            'message' => 'You have been unsubscribed successfully.',
+        ]);
+    }
+
     public function me()
     {
         $session = session();
