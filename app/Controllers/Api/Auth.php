@@ -30,6 +30,8 @@ class Auth extends BaseController
             'mobile'  => $mobile,
         ]);
 
+        log_message('info', 'OTP request response: ' . json_encode($response, JSON_UNESCAPED_SLASHES));
+
         if (! isset($response->response)) {
             return $this->fail('Unable to reach OTP server.');
         }
@@ -132,6 +134,8 @@ class Auth extends BaseController
             'otp_code'    => $otp,
             'mobile'      => $mobile,
         ]);
+
+        log_message('info', 'OTP verify response: ' . json_encode($response, JSON_UNESCAPED_SLASHES));
 
         if (($response->response ?? null) !== 'Success') {
             return $this->fail('OTP verification failed.');

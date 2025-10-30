@@ -12,7 +12,7 @@ $routes->group('api', static function ($routes) {
     $routes->post('auth/request-otp', 'Api\Auth::requestOtp');
     $routes->post('auth/verify-otp', 'Api\Auth::verifyOtp');
     $routes->post('auth/unregister', 'Api\Auth::unregister');
-    $routes->match(['get', 'post'], 'auth/logout', 'Api\Auth::logout');
+    $routes->match(['GET', 'POST'], 'auth/logout', 'Api\Auth::logout');
 
     $routes->get('config', 'Api\Config::show');
 
