@@ -189,7 +189,7 @@ class Documents extends BaseController
             'name'        => $document['name'],
             'type'        => $document['type'],
             'folder_id'   => $document['folder_id'],
-            'file_url'    => base_url($document['file_path']),
+            'file_url'    => $this->buildAssetUrl($document['file_path']),
             'file_size'   => (int) $document['file_size'],
             'mime_type'   => $document['mime_type'],
             'gemini_text' => $document['gemini_text'],
@@ -198,6 +198,20 @@ class Documents extends BaseController
             'updated_at'  => $document['updated_at'],
             'synced_at'   => $document['synced_at'],
         ];
+    }
+
+    private function buildAssetUrl(?string $relativePath): ?string
+    {
+        if (! $relativePath) {
+            return null;
+        }
+
+        $base = rtrim(base_url(), '/');
+        if (substr($base, -4) === '/api') {
+            $base = substr($base, 0, -4);
+        }
+
+        return $base . '/' . ltrim($relativePath, '/');
     }
 
     private function ensureDirectory(string $path): void
